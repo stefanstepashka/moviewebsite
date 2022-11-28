@@ -12,15 +12,21 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 
+import secret_changes
+from secret_changes import *
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+import os
+SECRET_KEY = secret_changes.SECRET_KEY
+
+
+# Add .env variables anywhere before SECRET_KEY
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-fty#x^)*s33kbrdd&tkgk9m7z1dbvebq*_+&%fhff6&^9!g8$7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
