@@ -1,0 +1,11 @@
+{% extends 'movie/foractors.html' %}
+
+{% block content %}
+
+{% block title %} Актер {% endblock %}
+    <h2> Актеры </h2>
+    <ul>{% for actor in actors %}
+        <li><a href="{{ actor.get_url }}">{{actor.first_name}} {{actor.last_name }} </a> </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

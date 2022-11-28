@@ -1,0 +1,12 @@
+{% extends 'movie/base.html' %}
+
+
+{% block title %} Режиссер {% endblock %}
+
+{% block direct %}
+<h2> Режиссер </h2>
+    <h3> Имя - {{ dir.first_name }} </h3>
+     <h3> Фамилия - {{ dir.last_name }} </h3>
+     <h3> Почта - {{ dir.email }} </h3>
+
+{% endblock %}

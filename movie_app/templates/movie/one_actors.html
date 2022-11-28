@@ -1,0 +1,12 @@
+{% extends 'movie/foractors.html' %}
+
+
+{% block title %} {% endblock %}
+
+{% block direct %}
+<h2>Актер</h2>
+    <h3> Имя - {{ act.first_name }} </h3>
+     <h3> Фамилия - {{ act.last_name }} </h3>
+     <h3> Пол - {{ act.gender }} </h3>
+
+{% endblock %}
