@@ -14,11 +14,7 @@
 
 <li>HTML/CSS</li>
 
-<p align="center">
-  <img src="C:/Users/stefik/Desktop/my_models.png" width="350" title="hover text">
-</p>
-
-
+![models](C:/Users/stefik/Desktop/my_models.png)
 
 # Быстрый старт
 
