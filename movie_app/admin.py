@@ -10,8 +10,8 @@ admin.site.register(Genres)
 
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
-    list_display = ['name', 'rating', 'director', 'budget']
-    list_editable = ['rating', 'director', 'budget']
+    list_display = ['name', 'rating', 'budget']
+    list_editable = ['rating', 'budget']
     ordering = ['-rating', '-name']
     list_per_page = 10
     actions = ['set_dollars', 'set_euro']

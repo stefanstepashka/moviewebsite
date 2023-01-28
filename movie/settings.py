@@ -18,7 +18,7 @@ from secret_changes import *
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 import os
-SECRET_KEY = secret_changes.SECRET_KEY
+SECRET_KEY = 'django-insecure-fty#x^)*s33kbrdd&tkgk9m7z1dbvebq*_+&%fhff6&^9!g8$7'
 
 
 # Add .env variables anywhere before SECRET_KEY
@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'movie_app'
+    'movie_app',
+    'django_extensions'
 ]
 
 MIDDLEWARE = [
@@ -128,6 +129,14 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
+
+GRAPH_MODELS = {
+  'all_applications': True,
+  'group_models': True,
+}
+GRAPH_MODELS = {
+  'app_labels': ["movie_app"],
+}
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
 # Default primary key field type

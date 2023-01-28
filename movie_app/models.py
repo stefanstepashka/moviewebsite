@@ -107,7 +107,7 @@ class Movie(models.Model):
 
     currency = models.CharField(max_length=3, choices=CURRENCY_CHOICES, default=RUB)
     slug = models.SlugField(default='', null=False, db_index=True)
-    director = models.ForeignKey(Directors, on_delete=models.CASCADE, null=True)
+    director = models.ManyToManyField(Directors)
     actors = models.ManyToManyField(Actors)
     genres = models.ManyToManyField(Genres)
     cinemas = models.ManyToManyField('Cinema')
