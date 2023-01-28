@@ -14,7 +14,6 @@
 
 <li>HTML/CSS</li>
 
-![models](/Users/stefik/Desktop/my_models.png)
 
 # Быстрый старт
 
