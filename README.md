@@ -14,7 +14,9 @@
 
 <li>HTML/CSS</li>
 
-[alt text](http://url/to/img.png)
+<p align="center">
+  <img src="\Users\stefik\Desktop\my_models.png" width="350" title="hover text">
+</p>
 
 
 
