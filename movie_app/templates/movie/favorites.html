@@ -1,0 +1,22 @@
+{% extends 'movie/base.html' %}
+
+{% block favmovies %}
+
+{% if favorites %}
+    <h4>Favourites Movies</h4>
+
+    {% for fav in favorites %}
+    <form action="{% url 'personal' %}" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="favorite_id" value="{{ fav.id }}">
+        <input type="submit" value="Remove from favorites">
+
+        <li><a href="{{ fav.movie.get_absolute_url }}">{{ fav.movie.name }}</a></li>
+        </form>
+
+    {% endfor %}
+{% else %}
+    <p>You have no favorites yet.</p>
+{% endif %}
+
+{% endblock %}

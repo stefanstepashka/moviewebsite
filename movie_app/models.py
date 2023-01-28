@@ -2,11 +2,41 @@ from django.db import models
 from django.urls import reverse
 # Create your models here\
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import User
+
+#Genre of the movie
 
 
+class Genres(models.Model):
+    comedy = 'comedy'
+    drama = 'drama'
+    western = 'western'
+    science = 'science fiction'
+    fantasy = 'fantasy'
+    horror = 'horror'
+    psycho_thriller = 'psychological thriller'
+    romance = 'romance'
+    GENRES = [
+        (comedy, 'Comedy'),
+        (drama, 'Drama'),
+        (western, 'Western'),
+        (science, 'Science Fiction'),
+        (fantasy, 'Fantasy'),
+        (horror, 'Horror'),
+        (psycho_thriller, 'Psychological Thriller'),
+        (romance, 'Romance')
+    ]
 
+    genre = models.CharField(max_length=22, choices=GENRES)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['genre'], name='unique_genre')
+        ]
+    def __str__(self):
+        return f"{self.genre}"
 #DIRECTORS
+
 
 class Directors(models.Model):
     first_name = models.CharField(max_length=100)
@@ -19,20 +49,20 @@ class Directors(models.Model):
     def __str__(self):
         return f"{self.first_name }  {self.last_name}"
 
+
 #ACTORS
 class Actors(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    MALE = 'M'
-    FEMALE = 'F'
+    MALE = 'Male'
+    FEMALE = 'Female'
+
     GENDERS = [
         (MALE, 'Мужчина'),
         (FEMALE, 'Женщина')
     ]
 
-    gender = models.CharField(max_length=1, choices=GENDERS, default=MALE)
-
-
+    gender = models.CharField(max_length=6, choices=GENDERS, default=MALE)
 
     def __str__(self):
         if self.gender == self.MALE:
@@ -43,6 +73,20 @@ class Actors(models.Model):
 
     def get_url(self):
         return reverse('one_actors', args=[self.id])
+
+
+
+
+
+#Main model
+
+class UserFavourites(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    movie = models.ForeignKey('Movie', on_delete=models.CASCADE, related_name='favorites')
+    date_added = models.DateTimeField(auto_now_add=True)
+
+
+
 
 
 
@@ -65,9 +109,56 @@ class Movie(models.Model):
     slug = models.SlugField(default='', null=False, db_index=True)
     director = models.ForeignKey(Directors, on_delete=models.CASCADE, null=True)
     actors = models.ManyToManyField(Actors)
+    genres = models.ManyToManyField(Genres)
+    cinemas = models.ManyToManyField('Cinema')
 
     def __str__(self):
         return f"{self.name} {self.rating}%"
 
     def get_url(self):
         return reverse('one_movie', args=[self.id])
+
+    def get_absolute_url(self):
+        return reverse('one_movie', args=[str(self.id)])
+
+class Cinema(models.Model):
+    name = models.CharField(max_length=100)
+    location = models.CharField(max_length=200)
+    capacity = models.IntegerField(default=1)
+    show_movies = models.ManyToManyField(Movie)
+
+    def create_seats(self):
+        seats = [Seat(name=f'{row}{col}', showing=ShowTime) for row in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' for col in
+                 range(1, 11)]
+        Seat.objects.bulk_create(seats)
+    def __str__(self):
+        return self.name
+
+    def get_url(self):
+        return reverse('one_movie', args=[str(self.id)])
+
+class ShowTime(models.Model):
+    start_time = models.DateTimeField()
+    cinema = models.ForeignKey(Cinema, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Кинотеатр {self.cinema} фильм {self.movie}"
+
+class Seat(models.Model):
+    name = models.CharField(max_length=10, null=True)
+    is_available = models.BooleanField(default=True)
+    showing = models.ForeignKey(ShowTime, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+
+class Reservation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    seat = models.ForeignKey(Seat, on_delete=models.CASCADE)
+    customer_name = models.CharField(max_length=100)
+    customer_email = models.EmailField()
+    showing_at = models.ForeignKey(ShowTime, on_delete=models.CASCADE, null=True)
+
+    reservation_date = models.DateTimeField(auto_now_add=True)

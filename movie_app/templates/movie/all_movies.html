@@ -1,21 +1,79 @@
 {% extends 'movie/base.html' %}
 
-
 {% block movies %}
-    <h2> Фильмы </h2>
-    <ul>{% for movie in movies %}
-        <li><a href="{{ movie.get_url }}">
-            Название фильма - {{movie.name}}
-            Рейтинг фильма - {{movie.rating }}
-            Бюджет фильма - {{movie.budget}}
-            </a>
-        </li>
+<div>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
         {% endfor %}
-    </ul>
+    {% endif %}
+</div>
+
+    <h2> Фильмы </h2>
+
+        <form action="{% url 'movies' %}" method="GET">
+
+            <input type="text" name="q" placeholder="Search...">
+            <input type="submit" value="Search">
+            <select name="sort">
+                <option value="">None</option>
+                <option value="high">High</option>
+                <option value="low">Low</option>
+            </select>
+            <select name="genre">
+        <option value="">All genres</option>
+        {% for genre in genres %}
+            <option value="{{ genre.genre }}">{{ genre.genre }}</option>
+        {% endfor %}
+    </select>
+             </form>
+
+
+             <ul>{% for movie in movies %}
+            <form method="post" action="{% url 'add_to_favorites' %}">
+                    {% csrf_token %}
+                <li><a href="{{ movie.get_url }}">
+                     Название фильма - {{movie.name}}</a></li>
+                <input type="hidden" name="user" value="{{ user.id }}">
+                <input type="hidden" name="movie" value="{{ movie.id }}">
+                <input type="submit" value="Add to favorites">
+            </form>
+
+                <p class="movie">Рейтинг: {{movie.rating}}<i class="fas fa-star"></i></p>
+                <p class="movie">Бюджет фильма: {{movie.budget}}<i class="fas fa-star"></i></p>
+                </a>
+            </li>
+
+
+
+
+
+
+        {% endfor %}
+         </ul>
+
+
     <h3>Средний бюджет фильма {{ agg.budget__avg }}</h3>
     <h3>Минимальный рейтинг {{ agg.rating__min }}</h3>
     <h3>Максимальный рейтинг {{ agg.rating__max }}</h3>
     <h3>Всего фильмов {{agg.id__count}}</h3>
+    <div class="pagination">
+
+  <span class="step-links">
+    {% if movies.has_previous %}
+      <a href="?page={{ movies.previous_page_number }}{% if sort %}&sort={{ sort }}{% endif %}{% if query %}&q={{ query }}{% endif %}">previous</a>
+    {% endif %}
+
+    <span class="current">
+      Page {{ movies.number }} of {{ movies.paginator.num_pages }}.
+    </span>
+
+    {% if movies.has_next %}
+      <a href="?page={{ movies.next_page_number }}{% if sort %}&sort={{ sort }}{% endif %}{% if query %}&q={{ query }}{% endif %}">next</a>
+    {% endif %}
+  </span>
+</div>
+
 
 
 {% endblock %}

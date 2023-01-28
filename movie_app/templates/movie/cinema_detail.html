@@ -1,0 +1,51 @@
+{% extends 'movie/base.html' %}
+
+
+{% block cinemadetail %}
+<h1>{{ cinema.name }}</h1>
+<p>Location: {{ cinema.location }}</p>
+<p>Capacity: {{ cinema.capacity }}</p>
+<h2>Movies showing at this cinema:</h2>
+<ul>
+{% for movie in cinema.show_movies.all  %}
+    <li>{{ movie.name }}</li>
+{% endfor %}
+
+    <div id="seating-chart">
+
+    {% for showtime in showtimes %}
+    <h3>{{ showtime.movie.name }} - {{ showtime.start_time }}</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Seat Name</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for seat in showtime.seat_set.all %}
+                  {{ seat.name }}
+                <tr>
+
+                     {% if seat.is_available %}
+
+            <form action="{% url 'reserve_seat' cinema_id=cinema.id seat_id=seat.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Reserve</button>
+            </form>
+        {% else %}
+            <p>Seat is not Available</p>
+        {% endif %}
+    </tr>
+
+                    <td>{% if seat.is_available %} Available {% endif %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+        </div>
+{% endfor %}
+</ul>
+
+
+{% endblock %}

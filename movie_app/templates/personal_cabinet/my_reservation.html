@@ -1,0 +1,39 @@
+{% extends 'movie/base.html '%}
+
+{% block reservations %}
+<style> td, th {
+    padding: 15px;
+    margin: 10px;
+}
+</style>
+{% if reservations %}
+    <h1>My Reservations</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Movie</th>
+                <th>Cinema</th>
+                <th>Seat</th>
+                <th>Start Time</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reservation in reservations %}
+                <tr>
+                    <td>{{ reservation.seat.showing.movie.name }}</td>
+                    <td>{{ reservation.seat.showing.cinema.name }}</td>
+                    <td>{{ reservation.seat.name }}</td>
+                    <td>{{ reservation.seat.showing.start_time }}</td>
+                    <td>
+                        <a href="{% url 'cancel_reservation' reservation.id %}" class="btn btn-danger">Cancel</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>You have no reservations</p>
+{% endif %}
+
+{% endblock %}

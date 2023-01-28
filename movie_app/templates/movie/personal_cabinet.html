@@ -1,0 +1,8 @@
+{% extends 'movie/base.html' %}
+
+{% block favorites %}
+    <a href="{% url 'favorites' %}">Favorites </a>
+    <a href="{% url 'my_reservations' %}">My reservations </a>
+
+
+{% endblock %}

@@ -1,11 +1,31 @@
-{% extends 'movie/foractors.html' %}
+{% extends 'movie/base.html' %}
 
 {% block content %}
 
-{% block title %} Актер {% endblock %}
+{% block title %}  {% endblock %}
     <h2> Актеры </h2>
+    <form action="{% url 'actors' %}" method="GET">
+            <input type="text" name="q" placeholder="Search...">
+            <input type="submit" value="Search">
     <ul>{% for actor in actors %}
         <li><a href="{{ actor.get_url }}">{{actor.first_name}} {{actor.last_name }} </a> </li>
         {% endfor %}
     </ul>
+        </form>
+
+    <div class="Pagination">
+        <span class="step-links">
+            {% if actors.has_previous %}
+            <a href="?page={{ actors.previous_page }}{% if search_query %}&q={{search_query}}{% endif %}"> previos</a>
+            {% endif %}
+     <span class="current">
+      Page {{ actors.number }} of {{ actors.paginator.num_pages }}.
+    </span>
+
+    {% if actors.has_next %}
+      <a href="?page={{ actors.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}">next</a>
+    {% endif %}
+
+
+    </div>
 {% endblock %}

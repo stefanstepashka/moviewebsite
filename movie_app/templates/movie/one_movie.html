@@ -7,6 +7,19 @@
     <h3> Рейтинг - {{ mov.rating }} </h3>
      <h3> Бюджет - {{ mov.budget }} </h3>
      <h3> Год - {{ mov.year }} </h3>
+    <h3> Жанр - {% for genre in mov.genres.all %}
+        {{genre.genre}}
+        {% endfor %}
+    </h3>
 
+    <h3>Кинотеатры</h3>
+    {% for cinema in cinemas %}
+    <li><a href="{% url 'cinema-detail' cinema.id %}">{{ cinema.name }}</a></li>
+    <ul>
+        {% for showtime in cinema.showtimes.all %}
+            <li>{{ showtime.start_time }}</li>
+        {% endfor %}
+    </ul>
+{% endfor %}
 
 {% endblock %}

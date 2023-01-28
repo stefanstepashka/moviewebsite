@@ -4,10 +4,30 @@
 {% block title %} Режиссер {% endblock %}
 
 {% block direct %}
+    <form method="GET" action="{% url 'directors'%}">
+        <input type="text" name="q" placeholder="Search...">
+        <input type="submit" value="Search">
+
   <h2> Список всех режиссеров </h2>
   <ul>{% for director in directors %}
       <li> <a href="{{ director.get_url }}">{{director.first_name}} {{director.last_name}} </a> </li>
       {% endfor %}
   </ul>
+        </form>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if directors.has_previous %}
+            <a href="?page={{ directors.previous_page }}{% if search_query %}&q={{search_query}}{% endif %}"> previos</a>
+            {% endif %}
+     <span class="current">
+      Page {{ directors.number }} of {{ directors.paginator.num_pages }}.
+    </span>
+
+    {% if directors.has_next %}
+      <a href="?page={{ directors.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}">next</a>
+    {% endif %}
+
+    </div>
 {% endblock %}
 
