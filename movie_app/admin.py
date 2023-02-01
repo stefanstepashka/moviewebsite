@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Directors, Actors, Movie, Genres, Cinema, ShowTime, Seat
+from .models import Directors, Actors, Movie, Genres, Cinema, Showtime, Seat
 
 
 # Register your models here.
@@ -26,7 +26,7 @@ class CinemaAdmin(admin.ModelAdmin):
 
 
 
-@admin.register(ShowTime)
+@admin.register(Showtime)
 class ShowTimeAdmin(admin.ModelAdmin):
     list_display = ('start_time', 'cinema', 'movie')
     search_fields = ('cinema__name', 'movie__name')

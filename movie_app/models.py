@@ -75,9 +75,6 @@ class Actors(models.Model):
         return reverse('one_actors', args=[self.id])
 
 
-
-
-
 #Main model
 
 class UserFavourites(models.Model):
@@ -103,14 +100,19 @@ class Movie(models.Model):
     rating = models.IntegerField(validators=[MinValueValidator(1),
                                  MaxValueValidator(100)])
     year = models.IntegerField(null=True, blank=True)
-    budget = models.IntegerField(default=1000000, blank=True, validators=[MinValueValidator(1)])
+    budget = models.IntegerField(
+        default=1000000, blank=True,
+        validators=[MinValueValidator(1)])
 
-    currency = models.CharField(max_length=3, choices=CURRENCY_CHOICES, default=RUB)
+    currency = models.CharField(
+        max_length=3,
+        choices=CURRENCY_CHOICES, default=RUB)
     slug = models.SlugField(default='', null=False, db_index=True)
     director = models.ManyToManyField(Directors)
     actors = models.ManyToManyField(Actors)
     genres = models.ManyToManyField(Genres)
-    cinemas = models.ManyToManyField('Cinema')
+    cinemas = models.ManyToManyField(
+        'Cinema', related_name='cinema')
 
     def __str__(self):
         return f"{self.name} {self.rating}%"
@@ -122,13 +124,17 @@ class Movie(models.Model):
         return reverse('one_movie', args=[str(self.id)])
 
 class Cinema(models.Model):
-    name = models.CharField(max_length=100)
-    location = models.CharField(max_length=200)
-    capacity = models.IntegerField(default=1)
+    name = models.CharField(
+        max_length=100)
+    location = models.CharField(
+        max_length=200)
+    capacity = models.IntegerField(
+        default=1)
     show_movies = models.ManyToManyField(Movie)
 
+
     def create_seats(self):
-        seats = [Seat(name=f'{row}{col}', showing=ShowTime) for row in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' for col in
+        seats = [Seat(name=f'{row}{col}', showing=Showtime) for row in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' for col in
                  range(1, 11)]
         Seat.objects.bulk_create(seats)
     def __str__(self):
@@ -137,28 +143,41 @@ class Cinema(models.Model):
     def get_url(self):
         return reverse('one_movie', args=[str(self.id)])
 
-class ShowTime(models.Model):
+class Showtime(models.Model):
     start_time = models.DateTimeField()
-    cinema = models.ForeignKey(Cinema, on_delete=models.CASCADE)
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    cinema = models.ForeignKey(
+        Cinema,
+        on_delete=models.CASCADE)
+    movie = models.ForeignKey(
+        Movie,
+        on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Кинотеатр {self.cinema} фильм {self.movie}"
 
 class Seat(models.Model):
-    name = models.CharField(max_length=10, null=True)
-    is_available = models.BooleanField(default=True)
-    showing = models.ForeignKey(ShowTime, on_delete=models.CASCADE)
+    name = models.CharField(
+        max_length=10, null=True)
+    is_available = models.BooleanField(
+        default=True)
+    showing = models.ForeignKey(
+        Showtime, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
 
 
 class Reservation(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    seat = models.ForeignKey(Seat, on_delete=models.CASCADE)
-    customer_name = models.CharField(max_length=100)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=True)
+    seat = models.ForeignKey(
+        Seat, on_delete=models.CASCADE)
+    customer_name = models.CharField(
+        max_length=100)
     customer_email = models.EmailField()
-    showing_at = models.ForeignKey(ShowTime, on_delete=models.CASCADE, null=True)
+    showing_at = models.ForeignKey(
+        Showtime, on_delete=models.CASCADE,
+        null=True)
 
-    reservation_date = models.DateTimeField(auto_now_add=True)
+    reservation_date = models.DateTimeField(
+        auto_now_add=True)

@@ -3,16 +3,14 @@
 
 {% block mov %}
 
-<h2>Фильм</h2>
+<h2>Фильм - {{ mov.name }}</h2>
     <h3> Рейтинг - {{ mov.rating }} </h3>
      <h3> Бюджет - {{ mov.budget }} </h3>
      <h3> Год - {{ mov.year }} </h3>
-    <h3> Жанр - {% for genre in mov.genres.all %}
-        {{genre.genre}}
-        {% endfor %}
-    </h3>
+    <h3>Жанр - {{ mov.genres__genre }} </h3>
 
-    <h3>Кинотеатры</h3>
+
+    <h3>Кинотеатры которые показывают этот фильм</h3>
     {% for cinema in cinemas %}
     <li><a href="{% url 'cinema-detail' cinema.id %}">{{ cinema.name }}</a></li>
     <ul>
@@ -20,6 +18,7 @@
             <li>{{ showtime.start_time }}</li>
         {% endfor %}
     </ul>
+
 {% endfor %}
 
 {% endblock %}

@@ -1,6 +1,6 @@
 from django.contrib.auth import login, authenticate, logout
 from django.shortcuts import render, redirect
-from .models import Directors,  Actors, Movie, Genres, UserFavourites, Cinema, Seat, ShowTime, Reservation
+from .models import Directors,  Actors, Movie, Genres, UserFavourites, Cinema, Seat, Showtime, Reservation
 from .forms import ReservationForm
 from django.db.models import F, Sum, Max, Min, Count, Avg
 from django.shortcuts import get_object_or_404
@@ -14,7 +14,8 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.contrib import messages
 from django.http import HttpResponse
-
+from django.db import connection
+print(connection.queries)
 
 def show_all_movies(request):
     sort = request.GET.get('sort')
@@ -42,8 +43,6 @@ def show_all_movies(request):
     movies = paginator.get_page(page)
     movie_count = agg['id__count']
 
-
-
     return render(request, 'movie/all_movies.html', {
         'movies': movies,
         'agg': agg,
@@ -54,22 +53,29 @@ def show_all_movies(request):
 
 
 def one_movie(request, id_mov: int):
-    movie = get_object_or_404(Movie, id=id_mov)
+    movie = get_object_or_404(
+        Movie.objects.all().prefetch_related('cinemas'), id=id_mov)
 
-    cinemas = movie.cinemas.all()
+    cinemas = movie.cinemas.select_related('showtime').values('id',
+    'name')
+
     return render(request, 'movie/one_movie.html', {
         'mov': movie,
         'cinemas': cinemas
+
 
     })
 
 
 def cinema_detail(request, cinema_id):
-    cinema = get_object_or_404(Cinema, id=cinema_id)
-    movies = cinema.show_movies.all()
-    showtimes = ShowTime.objects.filter(cinema=cinema)
-    print(movies)
-    return render(request, 'movie/cinema_detail.html', {'cinema': cinema, 'movies': movies, 'showtimes': showtimes})
+    cinema = get_object_or_404(Cinema.objects.prefetch_related(
+        'show_movies').only('pk', 'show_movies__name',
+        'location', 'capacity', 'name'), id=cinema_id)
+    movies = cinema
+    showtimes = Showtime.objects.filter(cinema=cinema)
+    return render(request, 'movie/cinema_detail.html', {
+        'cinema': cinema, 'movies': movies,
+        'showtimes': showtimes})
 
 
 def reserve_seat(request, cinema_id, seat_id):
@@ -99,10 +105,13 @@ def index(request):
 
 
 def all_directors(request):
-    directors = Directors.objects.all()
+    directors = Directors.objects.all().only('first_name', 'last_name')
     search_query = request.GET.get('q')
     if search_query:
-        directors = Directors.objects.filter(Q(first_name__icontains=search_query) | Q(last_name__icontains=search_query))
+        directors = Directors.objects.filter(Q(
+            first_name__icontains=search_query) | Q(
+            last_name__icontains=search_query)).only('first_name',
+                                                       'last_name')
 
     paginator = Paginator(directors, 10)
     page = request.GET.get('page')
@@ -114,7 +123,9 @@ def all_directors(request):
 
 
 def one_director(request, id_dir: int):
-    dir = get_object_or_404(Directors, id=id_dir)
+    dir = get_object_or_404(Directors.objects.all().values('first_name',
+                                                           'last_name',
+                                                           'email'), id=id_dir)
     return render(request, 'movie/one_dir.html', {
         'dir': dir
     })
